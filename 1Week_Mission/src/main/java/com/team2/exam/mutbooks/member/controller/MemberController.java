@@ -3,6 +3,7 @@ package com.team2.exam.mutbooks.member.controller;
 import com.team2.exam.mutbooks.base.exception.AlreadyExistingMemberException;
 import com.team2.exam.mutbooks.base.exception.AlreadyExistingNicknameException;
 import com.team2.exam.mutbooks.member.dto.MemberJoinForm;
+import com.team2.exam.mutbooks.member.dto.MemberLoginForm;
 import com.team2.exam.mutbooks.member.entity.Member;
 import com.team2.exam.mutbooks.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
@@ -30,7 +32,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public String join(MemberJoinForm memberJoinForm) {
+    public String join(HttpServletRequest request, MemberJoinForm memberJoinForm) {
         log.info("memberJoinForm = {}", memberJoinForm);
 
         String enteredPassword = memberJoinForm.getPassword();
@@ -44,6 +46,17 @@ public class MemberController {
             return "redirect:/member/join?error= Already Existing Nickname";
         }
 
+        try {
+            request.login(memberJoinForm.getUsername(), enteredPassword);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
+
         return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String showLoginForm(MemberLoginForm memberLoginForm) {
+        return "member/login_form";
     }
 }
