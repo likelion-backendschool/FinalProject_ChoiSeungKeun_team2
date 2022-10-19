@@ -8,6 +8,7 @@ import com.team2.exam.mutbooks.member.entity.Member;
 import com.team2.exam.mutbooks.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,11 +27,13 @@ public class MemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/join")
     public String showJoinForm(MemberJoinForm memberJoinForm) {
         return "member/join_form";
     }
 
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public String join(HttpServletRequest request, MemberJoinForm memberJoinForm) {
         log.info("memberJoinForm = {}", memberJoinForm);
@@ -55,6 +58,7 @@ public class MemberController {
         return "redirect:/";
     }
 
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     public String showLoginForm(MemberLoginForm memberLoginForm) {
         return "member/login_form";
